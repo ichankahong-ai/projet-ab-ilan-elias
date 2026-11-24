@@ -3,7 +3,7 @@
 
 #include "Game.h"
 
-#include "../packages/raylib.6.2.0/build/native/include/raylib.h"
+#include "raylib.h"
 
 void Game::Run()
 {
