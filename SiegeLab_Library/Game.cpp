@@ -5,6 +5,8 @@
 
 #include "../packages/raylib.6.2.0/build/native/include/raylib.h"
 
+#include "OrbitCamera.hpp" // To implement
+
 void Game::Run()
 {
 	// Tell the window to use vsync and work on high DPI displays
@@ -13,26 +15,27 @@ void Game::Run()
 	// Create the window and OpenGL context
 	InitWindow(800, 600, "Hello Raylib");
 
-	Camera3D camera{};
-	camera.position = { 0, 5, 10 }; camera.target = { 0.0, 0.0 ,0.0 }; camera.up = { 0 ,1 ,0 }; camera.fovy = 100; camera.projection = CAMERA_ORTHOGRAPHIC;
+	OrbitCamera orbit({ 2.0f, 1.5f, 0.0f }, 12.0f, 90.0f);
+
+	/*Camera3D camera{};
+	camera.position = { 0, 5, 10 }; camera.target = { 0.0, 0.0 ,0.0 }; camera.up = { 0 ,1 ,0 }; camera.fovy = 100; camera.projection = CAMERA_ORTHOGRAPHIC;*/
+
+	
 
 	// game loop
 	while (!WindowShouldClose())		// run the loop until the user presses ESCAPE or presses the Close button on the window
 	{
+
+
+
+
+
 		// drawing
 		BeginDrawing();
-
-		// Setup the back buffer for drawing (clear color and depth buffers)
-		ClearBackground(BLACK);
-
-		// draw some text using the default font
-		DrawText("Hello Raylib", 200, 200, 20, WHITE);
-
-		BeginMode3D(camera);
-		DrawCircle3D(Vector3(0, 0, 0), 50, Vector3(0, 0, 0), 10, RED);
-		DrawSphere(Vector3(0, 0, 0), 10, RED);
+		ClearBackground(RAYWHITE);
+		BeginMode3D(orbit.getCamera());
+		DrawGrid(20, 1.0f);
 		EndMode3D();
-		// end the frame and get ready for the next one  (display frame, poll input, etc...)
 		EndDrawing();
 	}
 
