@@ -1,5 +1,6 @@
 #include "CameraManager.h"
 
+
 CameraManager::CameraManager(Vector3 pos, float radius, float zoom)
 {
 	camera.position = pos;

@@ -26,8 +26,8 @@ void Game::Run()
 	while (!WindowShouldClose())		// run the loop until the user presses ESCAPE or presses the Close button on the window
 	{
 
-
-
+		orbit.update(GetFrameTime(), IsMouseButtonDown(MOUSE_BUTTON_RIGHT),
+			GetMouseDelta(), GetMouseWheelMove());
 
 
 		// drawing
