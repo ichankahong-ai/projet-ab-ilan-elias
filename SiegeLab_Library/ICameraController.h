@@ -13,5 +13,6 @@ public:
 	Camera3D getCamera() { return manager.getCamera(); };
 private:
 	CameraManager manager;
+	Vector2 oldpos = {0,0};
 };
 

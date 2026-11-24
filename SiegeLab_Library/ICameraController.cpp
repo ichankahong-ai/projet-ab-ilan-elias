@@ -11,4 +11,7 @@ void ICameraController::update(float dt, bool clic, Vector2 pos, float zooming)
 		manager.setZoom(manager.getzoom() + zooming);
 		std::cout << zooming<<std::endl;
 	}
+
+	if (clic){}
+	else {}
 }
