@@ -11,6 +11,7 @@ public:
 	void update(float dt, bool clic, Vector2 pos, float zooming);
 
 	Camera3D getCamera() { return controller.getCamera(); };
+	Camera3D* getCamerastar(){ return controller.getCamerastar(); };
 private:
 	ICameraController controller;
 

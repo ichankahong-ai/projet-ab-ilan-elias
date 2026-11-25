@@ -11,6 +11,7 @@ public:
 	void update(float dt, bool clic, Vector2 pos, float zooming);
 
 	Camera3D getCamera() { return manager.getCamera(); };
+	Camera3D* getCamerastar() { return manager.getCamerastar(); };
 private:
 	CameraManager manager;
 	Vector2 oldpos = {0,0};
