@@ -35,6 +35,7 @@ void Game::Run()
 		ClearBackground(RAYWHITE);
 		BeginMode3D(orbit.getCamera());
 		DrawGrid(20, 1.0f);
+		DrawCube({ 0.0f, 0.0f, 0.0f }, 2.0f, 2.0f, 2.0f, RED);
 		EndMode3D();
 		EndDrawing();
 	}

@@ -10,8 +10,11 @@ public:
 	Camera3D getCamera() { return camera; };
 	float getzoom() { return Xzoom; }
 	void setZoom(float zoom) { Xzoom = zoom; }
+	float getFovy() { return fovy; }
+	void setFovy(float newy) { camera.fovy = newy; };
 private:
 	Camera3D camera{};
 	float Xzoom;
+	float fovy;
 };
 

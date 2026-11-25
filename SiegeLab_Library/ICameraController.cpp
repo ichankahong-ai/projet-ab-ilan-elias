@@ -14,4 +14,6 @@ void ICameraController::update(float dt, bool clic, Vector2 pos, float zooming)
 
 	if (clic){}
 	else {}
+
+	manager.setFovy( manager.getFovy() * manager.getzoom());
 }
