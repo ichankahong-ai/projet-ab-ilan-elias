@@ -17,22 +17,18 @@ void Game::Run()
 
 	OrbitCamera orbit({ 2.0f, 1.5f, 0.0f }, 12.0f, 90.0f);
 	Camera3D* camera = orbit.getCamerastar();
-	/*Camera3D camera{};
-	camera.position = { 0, 5, 10 }; camera.target = { 0.0, 0.0 ,0.0 }; camera.up = { 0 ,1 ,0 }; camera.fovy = 100; camera.projection = CAMERA_ORTHOGRAPHIC;*/
 
 	bool locked = false;
 	int mode = CAMERA_FREE;
 
-	//DisableCursor();
-	//SetMouseCursor();
 
 	// game loop
 	while (!WindowShouldClose())		// run the loop until the user presses ESCAPE or presses the Close button on the window
 	{
 
 		if (IsKeyPressed(KEY_UP)) mode = CAMERA_FREE;
-		else if (IsKeyPressed(KEY_LEFT)) mode = CAMERA_FIRST_PERSON;
-		else if (IsKeyPressed(KEY_RIGHT)) mode = CAMERA_ORBITAL;
+		/*else if (IsKeyPressed(KEY_LEFT)) mode = CAMERA_FIRST_PERSON;
+		else if (IsKeyPressed(KEY_RIGHT)) mode = CAMERA_ORBITAL;*/
 		UpdateCamera(camera, mode);
 
 
@@ -40,13 +36,12 @@ void Game::Run()
 			GetMouseDelta(), GetMouseWheelMove());
 
 
-		if (IsKeyPressed(KEY_DOWN)) locked = !locked;
-		if (locked) {
-			camera->target = Vector3{ 0.0f, 0.0f, 0.0f };
+		if (IsKeyPressed(KEY_DOWN)) {
+			locked = !locked;  
+			locked ? EnableCursor(): DisableCursor();
 		}
-		else {
-
-		}
+		if (locked) { camera->target = Vector3{ 0.0f, 0.0f, 0.0f }; }
+		else { DisableCursor(); }
 
 		// drawing
 		BeginDrawing();
