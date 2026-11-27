@@ -158,6 +158,7 @@
     <ClInclude Include="Game.h" />
     <ClInclude Include="ICameraController.h" />
     <ClInclude Include="InputController.h" />
+    <ClInclude Include="Launcher.h" />
     <ClInclude Include="OrbitCamera.hpp" />
     <ClInclude Include="pch.h" />
   </ItemGroup>

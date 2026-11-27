@@ -5,6 +5,8 @@
 
 #include "../packages/raylib.6.2.0/build/native/include/raylib.h"
 
+#include "InputController.h"
+#include "Launcher.h"
 #include "OrbitCamera.hpp" // To implement
 
 void Game::Run()
@@ -17,6 +19,9 @@ void Game::Run()
 
 	OrbitCamera orbit({ 2.0f, 1.5f, 0.0f }, 12.0f, 90.0f);
 	Camera3D* camera = orbit.getCamerastar();
+
+	Launcher launcher;
+	InputController input;
 
 	bool locked = false;
 	int mode = CAMERA_FREE;
@@ -35,6 +40,18 @@ void Game::Run()
 		orbit.update(GetFrameTime(), IsMouseButtonDown(MOUSE_BUTTON_RIGHT),
 			GetMouseDelta(), GetMouseWheelMove());
 
+		launcher.aim(input.captureLauncher(), GetFrameTime());
+
+		const ShotSettings shot = launcher.shotSettings();
+		const bool heavy = (shot.projectileKind == ProjectileKind::Heavy);
+
+		const Vector3 origin = { shot.origin.x, shot.origin.y, shot.origin.z };
+		const float length = shot.speed * 0.4f;
+		const Vector3 tip = {
+			origin.x + shot.direction.x * length,
+			origin.y + shot.direction.y * length,
+			origin.z + shot.direction.z * length
+		};
 
 		if (IsKeyPressed(KEY_DOWN)) {
 			locked = !locked;  
@@ -49,7 +66,18 @@ void Game::Run()
 		BeginMode3D(orbit.getCamera());
 		DrawGrid(20, 1.0f);
 		DrawCube({ 0.0f, 0.0f, 0.0f }, 2.0f, 2.0f, 2.0f, RED);
+
+		DrawSphere(origin, heavy ? 0.36f : 0.28f, heavy ? DARKPURPLE : BLUE);
+		DrawLine3D(origin, tip, RED);
+		DrawSphere(tip, 0.1f, RED);
+
 		EndMode3D();
+
+		DrawText(TextFormat("Azimut    : %.1f deg", launcher.azimuthDeg()), 10, 10, 20, DARKGRAY);
+		DrawText(TextFormat("Elevation : %.1f deg", launcher.elevationDeg()), 10, 34, 20, DARKGRAY);
+		DrawText(TextFormat("Vitesse   : %.1f m/s", launcher.speed()), 10, 58, 20, DARKGRAY);
+		DrawText(TextFormat("Projectile: %s", heavy ? "Heavy" : "Standard"), 10, 82, 20, DARKGRAY);
+
 		EndDrawing();
 
 		//DrawText("Mode:", 20, 20, 10, BLACK);
