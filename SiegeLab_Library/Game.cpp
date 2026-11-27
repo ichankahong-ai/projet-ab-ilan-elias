@@ -23,7 +23,8 @@ void Game::Run()
 	bool locked = false;
 	int mode = CAMERA_FREE;
 
-	DisableCursor();
+	//DisableCursor();
+	//SetMouseCursor();
 
 	// game loop
 	while (!WindowShouldClose())		// run the loop until the user presses ESCAPE or presses the Close button on the window
@@ -40,9 +41,12 @@ void Game::Run()
 
 
 		if (IsKeyPressed(KEY_DOWN)) locked = !locked;
-		if (locked)  camera->target = Vector3{ 0.0f, 0.0f, 0.0f };
+		if (locked) {
+			camera->target = Vector3{ 0.0f, 0.0f, 0.0f };
+		}
+		else {
 
-		
+		}
 
 		// drawing
 		BeginDrawing();
@@ -53,10 +57,10 @@ void Game::Run()
 		EndMode3D();
 		EndDrawing();
 
-		DrawText("Mode:", 20, 20, 10, BLACK);
-		DrawText("Locked rotation:", 20, 40, 10, DARKGRAY);
-		if (locked){ DrawText("Active", 110, 40, 10, RED); }
-		else { DrawText("Deactivated", 110, 40, 10, GREEN); }
+		//DrawText("Mode:", 20, 20, 10, BLACK);
+		//DrawText("Locked rotation:", 20, 40, 10, DARKGRAY);
+		if (locked){ DrawText("Shoot Mode", 110, 40, 20, RED); }
+		else { DrawText("Aim Mode", 110, 40, 20, GREEN); }
 	}
 
 	// destroy the window and cleanup the OpenGL context
