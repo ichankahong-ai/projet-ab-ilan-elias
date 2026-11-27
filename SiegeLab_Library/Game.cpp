@@ -20,19 +20,30 @@ void Game::Run()
 	/*Camera3D camera{};
 	camera.position = { 0, 5, 10 }; camera.target = { 0.0, 0.0 ,0.0 }; camera.up = { 0 ,1 ,0 }; camera.fovy = 100; camera.projection = CAMERA_ORTHOGRAPHIC;*/
 
+	bool locked = false;
+	int mode = CAMERA_FREE;
+
 	DisableCursor();
 
 	// game loop
 	while (!WindowShouldClose())		// run the loop until the user presses ESCAPE or presses the Close button on the window
 	{
-		UpdateCamera(camera, CAMERA_FREE);
-		//UpdateCamera(camera, CAMERA_FREE);
+
+		if (IsKeyPressed(KEY_UP)) mode = CAMERA_FREE;
+		else if (IsKeyPressed(KEY_LEFT)) mode = CAMERA_FIRST_PERSON;
+		else if (IsKeyPressed(KEY_RIGHT)) mode = CAMERA_ORBITAL;
+		UpdateCamera(camera, mode);
+
 
 		orbit.update(GetFrameTime(), IsMouseButtonDown(MOUSE_BUTTON_RIGHT),
 			GetMouseDelta(), GetMouseWheelMove());
 
 
-		if (IsKeyDown(KEY_DOWN)) camera->target = Vector3{0.0f, 0.0f, 0.0f};
+		if (IsKeyPressed(KEY_DOWN)) locked = !locked;
+		if (locked)  camera->target = Vector3{ 0.0f, 0.0f, 0.0f };
+
+		
+
 		// drawing
 		BeginDrawing();
 		ClearBackground(RAYWHITE);
@@ -41,6 +52,11 @@ void Game::Run()
 		DrawCube({ 0.0f, 0.0f, 0.0f }, 2.0f, 2.0f, 2.0f, RED);
 		EndMode3D();
 		EndDrawing();
+
+		DrawText("Mode:", 20, 20, 10, BLACK);
+		DrawText("Locked rotation:", 20, 40, 10, DARKGRAY);
+		if (locked){ DrawText("Active", 110, 40, 10, RED); }
+		else { DrawText("Deactivated", 110, 40, 10, GREEN); }
 	}
 
 	// destroy the window and cleanup the OpenGL context
