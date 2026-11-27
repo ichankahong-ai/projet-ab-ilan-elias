@@ -3,7 +3,8 @@
 
 #include "Game.h"
 
-#include "../packages/raylib.6.2.0/build/native/include/raylib.h"
+#include "raylib.h"
+#include "raymath.h"
 
 #include "InputController.h"
 #include "Launcher.h"
@@ -30,6 +31,7 @@ void Game::Run()
 	// game loop
 	while (!WindowShouldClose())		// run the loop until the user presses ESCAPE or presses the Close button on the window
 	{
+		const LauncherInput inputs = input.captureLauncher();
 
 		if (IsKeyPressed(KEY_UP)) mode = CAMERA_FREE;
 		/*else if (IsKeyPressed(KEY_LEFT)) mode = CAMERA_FIRST_PERSON;
@@ -40,25 +42,17 @@ void Game::Run()
 		orbit.update(GetFrameTime(), IsMouseButtonDown(MOUSE_BUTTON_RIGHT),
 			GetMouseDelta(), GetMouseWheelMove());
 
-		launcher.aim(input.captureLauncher(), GetFrameTime());
-
-		const ShotSettings shot = launcher.shotSettings();
-		const bool heavy = (shot.projectileKind == ProjectileKind::Heavy);
-
-		const Vector3 origin = { shot.origin.x, shot.origin.y, shot.origin.z };
-		const float length = shot.speed * 0.4f;
-		const Vector3 tip = {
-			origin.x + shot.direction.x * length,
-			origin.y + shot.direction.y * length,
-			origin.z + shot.direction.z * length
-		};
-
-		if (IsKeyPressed(KEY_DOWN)) {
+		if (inputs.cameraspin) {
 			locked = !locked;  
 			locked ? EnableCursor(): DisableCursor();
 		}
-		if (locked) { camera->target = Vector3{ 0.0f, 0.0f, 0.0f }; }
+		if (locked) { 
+			camera->target = Vector3{ 0.0f, 0.0f, 0.0f };
+			launcher.aim(inputs, GetFrameTime());
+		}
 		else { DisableCursor(); }
+
+		const ShotSettings shot = launcher.shotSettings();
 
 		// drawing
 		BeginDrawing();
@@ -67,23 +61,23 @@ void Game::Run()
 		DrawGrid(20, 1.0f);
 		DrawCube({ 0.0f, 0.0f, 0.0f }, 2.0f, 2.0f, 2.0f, RED);
 
-		DrawSphere(origin, heavy ? 0.36f : 0.28f, heavy ? DARKPURPLE : BLUE);
-		DrawLine3D(origin, tip, RED);
-		DrawSphere(tip, 0.1f, RED);
+		DrawSphere(shot.origin, shot.projectileKind == ProjectileKind::Heavy ? 0.36f : 0.28f, shot.projectileKind == ProjectileKind::Heavy ? DARKPURPLE : BLUE);
+		DrawLine3D(shot.origin, shot.tip, RED);
+		DrawSphere(shot.tip, 0.1f, RED);
 
 		EndMode3D();
 
+		//DrawText("Mode:", 20, 20, 10, BLACK);
+		//DrawText("Locked rotation:", 20, 40, 10, DARKGRAY);
 		DrawText(TextFormat("Azimut    : %.1f deg", launcher.azimuthDeg()), 10, 10, 20, DARKGRAY);
 		DrawText(TextFormat("Elevation : %.1f deg", launcher.elevationDeg()), 10, 34, 20, DARKGRAY);
 		DrawText(TextFormat("Vitesse   : %.1f m/s", launcher.speed()), 10, 58, 20, DARKGRAY);
-		DrawText(TextFormat("Projectile: %s", heavy ? "Heavy" : "Standard"), 10, 82, 20, DARKGRAY);
+		DrawText(TextFormat("Projectile: %s", shot.projectileKind == ProjectileKind::Heavy ? "Heavy" : "Standard"), 10, 82, 20, DARKGRAY);
+
+		if (locked){ DrawText("Shoot Mode", 110, 540, 20, RED); }
+		else { DrawText("Spectator Mode", 110, 540, 20, GREEN); }
 
 		EndDrawing();
-
-		//DrawText("Mode:", 20, 20, 10, BLACK);
-		//DrawText("Locked rotation:", 20, 40, 10, DARKGRAY);
-		if (locked){ DrawText("Shoot Mode", 110, 40, 20, RED); }
-		else { DrawText("Aim Mode", 110, 40, 20, GREEN); }
 	}
 
 	// destroy the window and cleanup the OpenGL context

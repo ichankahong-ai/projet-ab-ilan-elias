@@ -3,32 +3,59 @@
 #include <algorithm>
 #include <cmath>
 #include <numbers>
+#include "raylib.h"
 
-struct Vec3
-{
-    float x = 0.0f;
-    float y = 0.0f;
-    float z = 0.0f;
-};
+//struct Vec3
+//{
+//    float x = 0.0f;
+//    float y = 0.0f;
+//    float z = 0.0f;
+//};
 
 enum class ProjectileKind { Standard, Heavy };
 
 struct ShotSettings
 {
-    Vec3 origin;
-    Vec3 direction;
+    Vector3 origin;
+    Vector3 direction;
     float speed = 0.0f;
     ProjectileKind projectileKind = ProjectileKind::Standard;
+
+    //const bool heavy = (shot.projectileKind == ProjectileKind::Heavy);
+    //const Vector3 origin = { origin.x, origin.y, origin.z };
+
+    const float length = speed * 0.4f;
+    const Vector3 tip = {
+        origin.x + direction.x * length,
+        origin.y + direction.y * length,
+        origin.z + direction.z * length
+    };
 };
 
 struct LauncherInput
 {
+    //camera base control
+    bool pitchUp = false;
+    bool pitchDown = false;
+    bool cameraForward = false;
+    bool cameraBackward = false;
+    bool yawRight = false;
+    bool yawLeft = false;
+    bool cameraLeanLeft = false;
+    bool cameraLeanRight = false;
+
+    //camera secondary control
+    bool cameraspin = false;
+
+    //cannon base control
     bool azimuthNegative = false;
     bool azimuthPositive = false;
     bool elevationUp = false;
     bool elevationDown = false;
     bool speedUp = false;
     bool speedDown = false;
+
+    //bullet base control
     bool selectStandard = false;
     bool selectHeavy = false;
 };
@@ -43,7 +70,7 @@ public:
     static constexpr float kMinSpeed = 8.0f;
     static constexpr float kMaxSpeed = 22.0f;
 
-    explicit Launcher(Vec3 origin = { -8.0f, 1.0f, 0.0f })
+    explicit Launcher(Vector3 origin = { -8.0f, 1.0f, 0.0f })
         : origin_(origin)
     {
     }
@@ -57,49 +84,19 @@ public:
     float elevationDeg() const { return elevationDeg_; }
     float speed() const { return speed_; }
     ProjectileKind kind() const { return kind_; }
+    ShotSettings shotSettings() const { return { origin_, direction(), speed_, kind_ }; }
+    Vector3 initialVelocity() const { return { direction().x * speed_, direction().y * speed_, direction().z * speed_ }; }
 
-    void setRates(float angularDegPerSec, float speedPerSec)
-    {
-        angularRate_ = angularDegPerSec;
-        speedRate_ = speedPerSec;
-    }
+    void setRates(float angularDegPerSec, float speedPerSec);
 
-    void aim(const LauncherInput& in, float dt)
-    {
-        if (in.azimuthPositive) setAzimuthDeg(azimuthDeg_ + angularRate_ * dt);
-        if (in.azimuthNegative) setAzimuthDeg(azimuthDeg_ - angularRate_ * dt);
-        if (in.elevationUp)     setElevationDeg(elevationDeg_ + angularRate_ * dt);
-        if (in.elevationDown)   setElevationDeg(elevationDeg_ - angularRate_ * dt);
-        if (in.speedUp)         setSpeed(speed_ + speedRate_ * dt);
-        if (in.speedDown)       setSpeed(speed_ - speedRate_ * dt);
+    void aim(const LauncherInput& in, float dt);
 
-        if (in.selectStandard)  kind_ = ProjectileKind::Standard;
-        if (in.selectHeavy)     kind_ = ProjectileKind::Heavy;
-    }
-
-    Vec3 direction() const
-    {
-        const float a = azimuthDeg_ * kDegToRad;
-        const float e = elevationDeg_ * kDegToRad;
-        const float ce = std::cos(e);
-        return { ce * std::cos(a), std::sin(e), ce * std::sin(a) };
-    }
-
-    ShotSettings shotSettings() const
-    {
-        return { origin_, direction(), speed_, kind_ };
-    }
-
-    Vec3 initialVelocity() const
-    {
-        const Vec3 d = direction();
-        return { d.x * speed_, d.y * speed_, d.z * speed_ };
-    }
+    Vector3 direction() const;
 
 private:
     static constexpr float kDegToRad = std::numbers::pi_v<float> / 180.0f;
 
-    Vec3 origin_;
+    Vector3 origin_;
     float azimuthDeg_ = 0.0f;
     float elevationDeg_ = 30.0f;
     float speed_ = 16.0f;
@@ -107,4 +104,6 @@ private:
 
     float angularRate_ = 30.0f;
     float speedRate_ = 6.0f;    
+
+
 };
